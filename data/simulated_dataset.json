@@ -1,1 +1,76 @@
-
+{
+  "recipients": [
+    {
+      "vpa": "abcstore@upi",
+      "merchant_name": "ABC Store",
+      "category": "Retail",
+      "verified": true,
+      "txn_frequency": "normal",
+      "account_age_days": 620,
+      "risk_flags": []
+    },
+    {
+      "vpa": "rajukirana@upi",
+      "merchant_name": "Raju Kirana Store",
+      "category": "Grocery",
+      "verified": true,
+      "txn_frequency": "normal",
+      "account_age_days": 940,
+      "risk_flags": []
+    },
+    {
+      "vpa": "sharmaelectronics@upi",
+      "merchant_name": "Sharma Electronics",
+      "category": "Electronics",
+      "verified": true,
+      "txn_frequency": "normal",
+      "account_age_days": 1100,
+      "risk_flags": []
+    },
+    {
+      "vpa": "quickcash99@upi",
+      "merchant_name": "Unknown",
+      "category": "Unknown",
+      "verified": false,
+      "txn_frequency": "sudden_spike",
+      "account_age_days": 4,
+      "risk_flags": ["new_account", "unverified", "sudden_spike", "multiple_user_reports"]
+    },
+    {
+      "vpa": "fastpay2024@upi",
+      "merchant_name": "Unknown",
+      "category": "Unknown",
+      "verified": false,
+      "txn_frequency": "unusual_pattern",
+      "account_age_days": 12,
+      "risk_flags": ["new_account", "unverified", "unusual_amount_pattern"]
+    },
+    {
+      "vpa": "moneytransfer007@upi",
+      "merchant_name": "Unknown",
+      "category": "Unknown",
+      "verified": false,
+      "txn_frequency": "high_volume",
+      "account_age_days": 2,
+      "risk_flags": ["new_account", "unverified", "sudden_spike", "possible_mule_pattern"]
+    },
+    {
+      "vpa": "priyasharma@upi",
+      "merchant_name": "Priya Sharma",
+      "category": "Personal",
+      "verified": true,
+      "txn_frequency": "normal",
+      "account_age_days": 800,
+      "risk_flags": []
+    },
+    {
+      "vpa": "cafecoffeeday@upi",
+      "merchant_name": "Cafe Coffee House",
+      "category": "Food & Beverage",
+      "verified": true,
+      "txn_frequency": "normal",
+      "account_age_days": 1300,
+      "risk_flags": []
+    }
+  ]
+}
