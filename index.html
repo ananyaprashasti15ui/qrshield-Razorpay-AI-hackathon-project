@@ -1,1 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QRShield — Pre-Payment Risk Detection</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<header class="app-header">
+  <h1>QRShield</h1>
+  <p class="tagline">Don't just verify where your money is going. Verify the risk before it gets there.</p>
+</header>
+
+<main>
+
+  <!-- SCREEN 1: SCANNER -->
+  <section id="scanner-screen" class="screen active">
+    <h2>Scan UPI QR Code</h2>
+    <div class="video-wrapper">
+      <video id="video" playsinline></video>
+      <canvas id="canvas" hidden></canvas>
+    </div>
+    <p id="scan-status">Point your camera at a QR code</p>
+    <button id="manual-btn" class="secondary-btn">Enter UPI ID Manually</button>
+  </section>
+
+  <!-- SCREEN 2: RISK RESULT -->
+  <section id="result-screen" class="screen">
+    <div id="risk-card" class="risk-card">
+      <div id="risk-badge" class="risk-badge">LOW RISK</div>
+      <div id="risk-score" class="risk-score">0/100</div>
+      <p id="recipient-vpa" class="recipient-vpa"></p>
+      <div id="recipient-details" class="recipient-details"></div>
+      <div id="risk-reasons" class="risk-reasons"></div>
+    </div>
+    <button id="proceed-to-pay-btn" class="primary-btn">Continue to Pay</button>
+    <button id="scan-again-btn" class="secondary-btn">Scan Another QR</button>
+  </section>
+
+  <!-- SCREEN 3: PAYMENT SIMULATION -->
+  <section id="payment-screen" class="screen">
+    <h2>Enter Amount</h2>
+    <p id="payment-recipient" class="recipient-vpa"></p>
+    <input type="number" id="amount-input" placeholder="₹ Enter amount" />
+    <div id="warning-box" class="warning-box" hidden></div>
+    <button id="pay-btn" class="primary-btn">Pay</button>
+    <button id="cancel-btn" class="secondary-btn">Cancel</button>
+  </section>
+
+  <!-- SCREEN 4: CONFIRMATION -->
+  <section id="confirmation-screen" class="screen">
+    <div id="confirmation-icon" class="confirmation-icon"></div>
+    <h2 id="confirmation-title">Payment Successful</h2>
+    <p id="confirmation-text"></p>
+    <button id="new-payment-btn" class="primary-btn">New Payment</button>
+  </section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
