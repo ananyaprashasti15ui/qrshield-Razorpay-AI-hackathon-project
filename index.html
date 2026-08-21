@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QRShield — Pre-Payment Risk Detection</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -30,9 +31,18 @@
   <section id="result-screen" class="screen">
     <div id="risk-card" class="risk-card">
       <div id="risk-badge" class="risk-badge">LOW RISK</div>
-      <div id="risk-score" class="risk-score">0/100</div>
+
+      <svg id="gauge" viewBox="0 0 200 110" class="gauge-svg">
+        <path d="M10,100 A90,90 0 0,1 190,100" fill="none" stroke="#30363d" stroke-width="14"/>
+        <path id="gauge-fill" d="M10,100 A90,90 0 0,1 190,100" fill="none" stroke="#3fb950" stroke-width="14" stroke-dasharray="283" stroke-dashoffset="283"/>
+        <text id="gauge-number" x="100" y="90" text-anchor="middle" class="gauge-number">0</text>
+      </svg>
+
       <p id="recipient-vpa" class="recipient-vpa"></p>
       <div id="recipient-details" class="recipient-details"></div>
+
+      <canvas id="trend-chart" height="120"></canvas>
+
       <div id="risk-reasons" class="risk-reasons"></div>
     </div>
     <button id="proceed-to-pay-btn" class="primary-btn">Continue to Pay</button>
