@@ -12,6 +12,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 20px;
 }
 
 .app-header {
@@ -30,6 +31,36 @@ body {
   color: #8b949e;
   margin-top: 6px;
   max-width: 320px;
+}
+
+/* Bottom Nav */
+.bottom-nav {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  max-width: 420px;
+  padding: 0 16px;
+  margin-bottom: 8px;
+  overflow-x: auto;
+}
+
+.nav-btn {
+  flex: 1;
+  background: #161b22;
+  color: #8b949e;
+  border: 1px solid #30363d;
+  padding: 10px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.nav-btn.active {
+  background: #2f81f7;
+  color: white;
+  border-color: #2f81f7;
 }
 
 main {
@@ -58,6 +89,19 @@ h2 {
   font-size: 18px;
   font-weight: 600;
   text-align: center;
+}
+
+h3.history-heading {
+  font-size: 15px;
+  color: #8b949e;
+  margin-top: 6px;
+}
+
+.section-subtext {
+  font-size: 13px;
+  color: #8b949e;
+  text-align: center;
+  line-height: 1.5;
 }
 
 /* Scanner */
@@ -148,12 +192,6 @@ h2 {
   color: #f85149;
 }
 
-.risk-score {
-  font-size: 40px;
-  font-weight: 800;
-  margin-bottom: 8px;
-}
-
 .recipient-vpa {
   color: #8b949e;
   font-size: 14px;
@@ -182,16 +220,54 @@ h2 {
   padding-left: 18px;
 }
 
+/* Gauge */
+.gauge-svg {
+  width: 180px;
+  margin: 10px auto 0;
+  display: block;
+}
+
+.gauge-number {
+  font-size: 28px;
+  font-weight: 800;
+  fill: #e6edf3;
+}
+
+#gauge-fill {
+  transition: stroke-dashoffset 1s ease, stroke 0.5s ease;
+}
+
+/* Trend Chart */
+#trend-chart {
+  width: 100% !important;
+  margin: 14px 0;
+}
+
 /* Payment Screen */
-#amount-input {
+#amount-input, textarea, input[type="text"], input[type="tel"] {
   width: 100%;
   padding: 16px;
-  font-size: 20px;
+  font-size: 16px;
   border-radius: 10px;
   border: 1px solid #30363d;
   background: #161b22;
   color: #e6edf3;
+}
+
+#amount-input {
+  font-size: 20px;
   text-align: center;
+}
+
+textarea {
+  font-family: inherit;
+  resize: vertical;
+}
+
+label {
+  font-size: 13px;
+  color: #8b949e;
+  margin-top: 4px;
 }
 
 .warning-box {
@@ -224,25 +300,167 @@ h2 {
   color: #8b949e;
   font-size: 14px;
 }
-/* Gauge */
-.gauge-svg {
-  width: 180px;
-  margin: 10px auto 0;
-  display: block;
+
+/* Dashboard */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-.gauge-number {
+.stat-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+}
+
+.stat-number {
   font-size: 28px;
   font-weight: 800;
-  fill: #e6edf3;
 }
 
-#gauge-fill {
-  transition: stroke-dashoffset 1s ease, stroke 0.5s ease;
+.stat-label {
+  font-size: 12px;
+  color: #8b949e;
+  margin-top: 4px;
 }
 
-/* Trend Chart */
-#trend-chart {
-  width: 100% !important;
-  margin: 14px 0;
+.stat-card.safe .stat-number { color: #3fb950; }
+.stat-card.risky .stat-number { color: #d29922; }
+.stat-card.avoided .stat-number { color: #f85149; }
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-item {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-item .h-level {
+  font-weight: 700;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.h-level.low { background: #1a3d1a; color: #3fb950; }
+.h-level.medium { background: #3d321a; color: #d29922; }
+.h-level.high { background: #3d1a1a; color: #f85149; }
+
+.empty-state {
+  text-align: center;
+  color: #8b949e;
+  font-size: 13px;
+  padding: 20px;
+}
+
+/* Guardian */
+.guardian-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.guardian-status {
+  color: #3fb950;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.guardian-info {
+  color: #8b949e;
+  font-size: 13px;
+}
+
+/* Enterprise / Razorpay Mockup */
+.mockup-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.mockup-label {
+  font-size: 12px;
+  color: #2f81f7;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mock-checkout {
+  background: #ffffff;
+  color: #1a1a1a;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.mock-checkout-header {
+  background: #072654;
+  color: white;
+  padding: 12px 16px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.mock-checkout-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mock-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #444;
+}
+
+.mock-risk-tag {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.mock-risk-tag.low {
+  background: #d1f5d3;
+  color: #1a7a2e;
+}
+
+.mock-pay-btn {
+  background: #072654;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.mockup-caption {
+  font-size: 12px;
+  color: #8b949e;
+  margin-top: 10px;
+  text-align: center;
 }
