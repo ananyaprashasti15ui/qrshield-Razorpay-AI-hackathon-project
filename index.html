@@ -14,6 +14,13 @@
   <p class="tagline">Don't just verify where your money is going. Verify the risk before it gets there.</p>
 </header>
 
+<nav class="bottom-nav">
+  <button id="nav-scan" class="nav-btn active">Scan</button>
+  <button id="nav-dashboard" class="nav-btn">Dashboard</button>
+  <button id="nav-guardian" class="nav-btn">Guardian</button>
+  <button id="nav-enterprise" class="nav-btn">Enterprise</button>
+</nav>
+
 <main>
 
   <!-- SCREEN 1: SCANNER -->
@@ -25,6 +32,7 @@
     </div>
     <p id="scan-status">Point your camera at a QR code</p>
     <button id="manual-btn" class="secondary-btn">Enter UPI ID Manually</button>
+    <button id="scam-check-btn" class="secondary-btn">Check a Suspicious Message Instead</button>
   </section>
 
   <!-- SCREEN 2: RISK RESULT -->
@@ -65,6 +73,97 @@
     <h2 id="confirmation-title">Payment Successful</h2>
     <p id="confirmation-text"></p>
     <button id="new-payment-btn" class="primary-btn">New Payment</button>
+  </section>
+
+  <!-- SCREEN 5: DASHBOARD -->
+  <section id="dashboard-screen" class="screen">
+    <h2>Your Safety Dashboard</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="stat-total">0</div>
+        <div class="stat-label">Total Scans</div>
+      </div>
+      <div class="stat-card safe">
+        <div class="stat-number" id="stat-safe">0</div>
+        <div class="stat-label">Safe Payments</div>
+      </div>
+      <div class="stat-card risky">
+        <div class="stat-number" id="stat-risky">0</div>
+        <div class="stat-label">Risky Flagged</div>
+      </div>
+      <div class="stat-card avoided">
+        <div class="stat-number" id="stat-avoided">0</div>
+        <div class="stat-label">Payments Avoided</div>
+      </div>
+    </div>
+    <h3 class="history-heading">Recent Activity</h3>
+    <div id="history-list" class="history-list"></div>
+  </section>
+
+  <!-- SCREEN 6: GUARDIAN MODE -->
+  <section id="guardian-screen" class="screen">
+    <h2>Guardian Mode</h2>
+    <p class="section-subtext">Add a trusted contact who gets alerted if a high-risk payment is attempted — built for protecting parents and elderly family members from digital fraud.</p>
+
+    <div id="guardian-setup" class="guardian-card">
+      <label>Trusted Contact Name</label>
+      <input type="text" id="guardian-name" placeholder="e.g. Rohan (Son)" />
+      <label>Trusted Contact Phone</label>
+      <input type="tel" id="guardian-phone" placeholder="e.g. 98765xxxxx" />
+      <button id="save-guardian-btn" class="primary-btn">Enable Guardian Mode</button>
+    </div>
+
+    <div id="guardian-active" class="guardian-card" hidden>
+      <p class="guardian-status">Guardian Mode Active</p>
+      <p id="guardian-info" class="guardian-info"></p>
+      <button id="remove-guardian-btn" class="secondary-btn">Turn Off</button>
+    </div>
+
+    <h3 class="history-heading">Guardian Alert Log</h3>
+    <div id="guardian-log" class="history-list"></div>
+  </section>
+
+  <!-- SCREEN 7: SCAM MESSAGE ANALYZER -->
+  <section id="scam-screen" class="screen">
+    <h2>Suspicious Message Check</h2>
+    <p class="section-subtext">Paste a message, SMS, or WhatsApp text you received — QRShield will analyze it for common scam patterns.</p>
+    <textarea id="scam-input" rows="6" placeholder="Paste the message here..."></textarea>
+    <button id="analyze-scam-btn" class="primary-btn">Analyze Message</button>
+    <div id="scam-result" class="risk-reasons" hidden></div>
+    <button id="scam-back-btn" class="secondary-btn">Back to Scanner</button>
+  </section>
+
+  <!-- SCREEN 8: ENTERPRISE / RAZORPAY INTEGRATION -->
+  <section id="enterprise-screen" class="screen">
+    <h2>Enterprise Integration</h2>
+    <p class="section-subtext">QRShield's risk engine is designed API-first — it can plug directly into existing payment infrastructure as a pre-transaction safety layer.</p>
+
+    <div class="mockup-card">
+      <p class="mockup-label">Concept: Razorpay Checkout Widget</p>
+      <div class="mock-checkout">
+        <div class="mock-checkout-header">Razorpay Checkout</div>
+        <div class="mock-checkout-body">
+          <div class="mock-row">
+            <span>Paying to</span>
+            <span>merchant@razorpay</span>
+          </div>
+          <div class="mock-row">
+            <span>Amount</span>
+            <span>₹2,499</span>
+          </div>
+          <div class="mock-risk-tag low">QRShield: Verified Merchant — Low Risk</div>
+          <button class="mock-pay-btn">Pay Now</button>
+        </div>
+      </div>
+      <p class="mockup-caption">A lightweight risk badge, shown automatically before checkout completes — no extra step for the user.</p>
+    </div>
+
+    <div class="mockup-card">
+      <p class="mockup-label">Concept: RazorpayX Bulk Payout Screening</p>
+      <p class="section-subtext" style="text-align:left;">
+        For businesses issuing bulk vendor/payroll payouts via RazorpayX, QRShield's engine can pre-screen beneficiary accounts at scale — flagging suspicious accounts before a batch payout is approved, reducing exposure to mule-account fraud.
+      </p>
+    </div>
   </section>
 
 </main>
