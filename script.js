@@ -75,31 +75,47 @@ const scanStatus = document.getElementById('scan-status');
 let scanning = false;
 
 async function startCamera() {
+  scanStatus.textContent = 'Requesting camera access...';
   try {
     stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment' }
+      video: { facingMode: { ideal: 'environment' } },
+      audio: false
     });
-    video.srcObject = stream;
-    video.setAttribute('playsinline', true);
-    video.play();
-    scanning = true;
-    requestAnimationFrame(scanLoop);
   } catch (err) {
-    scanStatus.textContent = 'Camera access denied. Use manual entry below.';
-    console.error(err);
+    console.error('Camera error:', err);
+    scanStatus.textContent = 'Camera not available (' + err.name + '). Use manual entry below.';
+    return;
   }
+
+  video.srcObject = stream;
+  video.setAttribute('playsinline', 'true');
+  video.muted = true;
+
+  video.onloadedmetadata = () => {
+    video.play().then(() => {
+      scanning = true;
+      scanStatus.textContent = 'Scanning...';
+      requestAnimationFrame(scanLoop);
+    }).catch(err => {
+      console.error('Play error:', err);
+      scanStatus.textContent = 'Could not start video preview.';
+    });
+  };
 }
 
 function scanLoop() {
   if (!scanning) return;
-  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+
+  if (video.videoWidth > 0 && video.videoHeight > 0) {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imageData.data, imageData.width, imageData.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+      inversionAttempts: 'dontInvert'
+    });
 
-    if (code) {
+    if (code && code.data) {
       handleScannedData(code.data);
       return;
     }
@@ -113,8 +129,8 @@ function stopCamera() {
     stream.getTracks().forEach(track => track.stop());
     stream = null;
   }
+  video.srcObject = null;
 }
-
 // ---------- HANDLE SCAN RESULT ----------
 function handleScannedData(rawText) {
   scanStatus.textContent = 'QR detected — analyzing...';
