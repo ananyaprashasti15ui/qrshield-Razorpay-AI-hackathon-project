@@ -1,1 +1,226 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}
 
+body {
+  background: #0d1117;
+  color: #e6edf3;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app-header {
+  text-align: center;
+  padding: 24px 16px 12px;
+}
+
+.app-header h1 {
+  font-size: 28px;
+  color: #2f81f7;
+  letter-spacing: 1px;
+}
+
+.tagline {
+  font-size: 13px;
+  color: #8b949e;
+  margin-top: 6px;
+  max-width: 320px;
+}
+
+main {
+  width: 100%;
+  max-width: 420px;
+  padding: 16px;
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  gap: 14px;
+  animation: fadeIn 0.3s ease;
+}
+
+.screen.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Scanner */
+.video-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #161b22;
+  border: 2px solid #30363d;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+#video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#scan-status {
+  text-align: center;
+  color: #8b949e;
+  font-size: 14px;
+}
+
+/* Buttons */
+.primary-btn {
+  background: #2f81f7;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  background: #388bfd;
+}
+
+.secondary-btn {
+  background: transparent;
+  color: #8b949e;
+  border: 1px solid #30363d;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.secondary-btn:hover {
+  border-color: #8b949e;
+  color: #e6edf3;
+}
+
+/* Risk Card */
+.risk-card {
+  background: #161b22;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #30363d;
+  text-align: center;
+}
+
+.risk-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.risk-badge.low {
+  background: #1a3d1a;
+  color: #3fb950;
+}
+
+.risk-badge.medium {
+  background: #3d321a;
+  color: #d29922;
+}
+
+.risk-badge.high {
+  background: #3d1a1a;
+  color: #f85149;
+}
+
+.risk-score {
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.recipient-vpa {
+  color: #8b949e;
+  font-size: 14px;
+  margin-bottom: 10px;
+  word-break: break-all;
+}
+
+.recipient-details {
+  font-size: 13px;
+  color: #8b949e;
+  text-align: left;
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+
+.risk-reasons {
+  text-align: left;
+  background: #0d1117;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.risk-reasons ul {
+  padding-left: 18px;
+}
+
+/* Payment Screen */
+#amount-input {
+  width: 100%;
+  padding: 16px;
+  font-size: 20px;
+  border-radius: 10px;
+  border: 1px solid #30363d;
+  background: #161b22;
+  color: #e6edf3;
+  text-align: center;
+}
+
+.warning-box {
+  background: #3d1a1a;
+  border: 1px solid #f85149;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 13px;
+  color: #ffb3ac;
+  line-height: 1.6;
+}
+
+.warning-box ul {
+  padding-left: 18px;
+  margin-top: 6px;
+}
+
+/* Confirmation */
+.confirmation-icon {
+  font-size: 48px;
+  text-align: center;
+}
+
+#confirmation-title {
+  text-align: center;
+}
+
+#confirmation-text {
+  text-align: center;
+  color: #8b949e;
+  font-size: 14px;
+}
