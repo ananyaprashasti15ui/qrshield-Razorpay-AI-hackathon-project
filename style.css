@@ -158,6 +158,16 @@ h3.history-heading {
   color: #e6edf3;
 }
 
+.secondary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secondary-btn:disabled:hover {
+  border-color: #30363d;
+  color: #8b949e;
+}
+
 /* Risk Card */
 .risk-card {
   background: #161b22;
