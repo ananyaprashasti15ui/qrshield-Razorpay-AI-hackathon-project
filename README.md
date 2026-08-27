@@ -83,6 +83,16 @@ QRShield is currently built as a fully client-side web app — no backend server
 - **Simulated Risk Data:** A local JSON dataset (`data/simulated_dataset.json`) stands in for real recipient/transaction data that would come from NPCI/bank rails in production
 
 **Data Flow:**
+Camera Feed → jsQR decodes UPI QR → VPA extracted
+     ↓
+VPA matched against simulated_dataset.json (or scored via fallback heuristic if unknown)
+     ↓
+Risk Engine computes score (0–100) + explanation reasons
+     ↓
+Result rendered: Risk Gauge + Trend Chart + Explanation
+     ↓
+User decides: Cancel / Proceed to Pay (simulated)
+
 
 **Production Roadmap:**
 The current risk engine is rule-based and runs entirely on simulated data, built this way for a fast, dependency-free hackathon demo. In a production deployment, this would connect to:
