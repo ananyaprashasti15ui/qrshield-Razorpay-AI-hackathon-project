@@ -71,3 +71,21 @@ Scan QR → AI analyzes recipient → Risk Score + Explanation shown → User de
 ---
 
 ## How It's Built (Architecture)
+
+QRShield is currently built as a fully client-side web app — no backend server is required to run the demo, which keeps it lightweight and easy to deploy on GitHub Pages.
+
+**Tech Stack:**
+- **Frontend:** Vanilla HTML, CSS, JavaScript (no framework — kept intentionally lightweight for fast load times)
+- **QR Scanning:** [jsQR](https://github.com/cozmo/jsQR) — real-time QR decoding directly from the device camera feed via the `getUserMedia` API
+- **Risk Visualization:** [Chart.js](https://www.chartjs.org/) for the recipient's transaction trend graph
+- **Voice Alerts:** Web Speech API (`SpeechSynthesisUtterance`) for spoken high/medium-risk warnings in Hindi
+- **Data Persistence:** Browser `localStorage` — stores scan history, Guardian Mode settings, and guardian alert logs locally on the user's device
+- **Simulated Risk Data:** A local JSON dataset (`data/simulated_dataset.json`) stands in for real recipient/transaction data that would come from NPCI/bank rails in production
+
+**Data Flow:**
+
+**Production Roadmap:**
+The current risk engine is rule-based and runs entirely on simulated data, built this way for a fast, dependency-free hackathon demo. In a production deployment, this would connect to:
+- Real transaction/beneficiary data via bank or NPCI-integrated APIs
+- A trained ML model (e.g. gradient-boosted trees or a lightweight neural net) for mule-account and anomaly detection, replacing the current rule-based scoring
+- Razorpay's Checkout and RazorpayX APIs for real payment execution and bulk payout screening, as outlined in the Enterprise Integration section
