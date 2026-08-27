@@ -334,14 +334,37 @@ function renderTrendChart(result) {
 }
 
 // ---------- VOICE ALERT ----------
+let cachedVoices = [];
+
+function loadVoices() {
+  if ('speechSynthesis' in window) {
+    cachedVoices = window.speechSynthesis.getVoices();
+  }
+}
+
+if ('speechSynthesis' in window) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
 function speakWarning(result) {
   if (!('speechSynthesis' in window)) return;
+
+  const hasHindiVoice = cachedVoices.some(v => v.lang && v.lang.toLowerCase().startsWith('hi'));
+
   const message = result.level === 'high'
-    ? 'Sawdhan. Yeh payment high risk ho sakta hai. Kripya dhyan se aage badhein.'
-    : 'Dhyan dein. Yeh recipient medium risk category mein hai.';
+    ? (hasHindiVoice
+        ? 'Sawdhan. Yeh payment high risk ho sakta hai. Kripya dhyan se aage badhein.'
+        : 'Warning. This payment may be high risk. Please proceed with caution.')
+    : (hasHindiVoice
+        ? 'Dhyan dein. Yeh recipient medium risk category mein hai.'
+        : 'Please note. This recipient falls under the medium risk category.');
+
   const utterance = new SpeechSynthesisUtterance(message);
-  utterance.lang = 'hi-IN';
+  utterance.lang = hasHindiVoice ? 'hi-IN' : 'en-US';
   utterance.rate = 0.95;
+  utterance.onerror = (e) => console.error('Speech synthesis error:', e);
+
   speechSynthesis.cancel();
   speechSynthesis.speak(utterance);
 }
