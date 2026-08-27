@@ -6,6 +6,7 @@ let trendChartInstance = null;
 let history = JSON.parse(localStorage.getItem('qrshield_history') || '[]');
 let guardian = JSON.parse(localStorage.getItem('qrshield_guardian') || 'null');
 let guardianLog = JSON.parse(localStorage.getItem('qrshield_guardian_log') || '[]');
+let reportedVPAs = JSON.parse(localStorage.getItem('qrshield_reported') || '[]');
 
 const screens = {
   scanner: document.getElementById('scanner-screen'),
@@ -162,6 +163,7 @@ document.getElementById('manual-btn').addEventListener('click', () => {
 function runRiskCheck(vpa) {
   const known = simulatedData.find(r => r.vpa.toLowerCase() === vpa.toLowerCase());
   const result = known ? scoreKnownRecipient(known) : scoreUnknownRecipient(vpa);
+  applyCommunityReports(result);
   currentRecipient = result;
   displayRiskResult(result);
   showScreen('result');
@@ -169,6 +171,15 @@ function runRiskCheck(vpa) {
   if (result.level === 'high' || result.level === 'medium') {
     speakWarning(result);
     notifyGuardian(result);
+  }
+}
+
+function applyCommunityReports(result) {
+  if (reportedVPAs.includes(result.vpa.toLowerCase())) {
+    result.score = Math.min(result.score + 20, 99);
+    result.reasons.push('This recipient has been reported as suspicious by other QRShield users.');
+    if (result.score >= 60) result.level = 'high';
+    else if (result.score >= 30) result.level = 'medium';
   }
 }
 
@@ -246,6 +257,11 @@ function displayRiskResult(result) {
 
   animateGauge(result.score, result.level);
   renderTrendChart(result);
+
+  const reportBtn = document.getElementById('report-btn');
+  const alreadyReported = reportedVPAs.includes(result.vpa.toLowerCase());
+  reportBtn.textContent = alreadyReported ? '🚩 Already Reported' : '🚩 Report this recipient as suspicious';
+  reportBtn.disabled = alreadyReported;
 }
 
 // ---------- GAUGE ANIMATION ----------
@@ -486,6 +502,19 @@ document.getElementById('proceed-to-pay-btn').addEventListener('click', () => {
 });
 
 document.getElementById('scan-again-btn').addEventListener('click', resetToScanner);
+
+document.getElementById('report-btn').addEventListener('click', () => {
+  if (!currentRecipient) return;
+  const vpaLower = currentRecipient.vpa.toLowerCase();
+  if (!reportedVPAs.includes(vpaLower)) {
+    reportedVPAs.push(vpaLower);
+    localStorage.setItem('qrshield_reported', JSON.stringify(reportedVPAs));
+    const reportBtn = document.getElementById('report-btn');
+    reportBtn.textContent = '🚩 Already Reported';
+    reportBtn.disabled = true;
+    alert('Thank you — this recipient has been flagged. Future scans of this UPI ID will show an elevated risk score for other users.');
+  }
+});
 document.getElementById('cancel-btn').addEventListener('click', () => {
   if (currentRecipient) {
     currentRecipient.avoided = true;
