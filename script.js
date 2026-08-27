@@ -225,12 +225,14 @@ function buildResultObject(vpa, name, category, verified, score, reasons) {
 function displayRiskResult(result) {
   const badge = document.getElementById('risk-badge');
   const vpaEl = document.getElementById('recipient-vpa');
+  const verifiedBadgeEl = document.getElementById('verified-badge');
   const detailsEl = document.getElementById('recipient-details');
   const reasonsEl = document.getElementById('risk-reasons');
 
   badge.textContent = result.level.toUpperCase() + ' RISK';
   badge.className = 'risk-badge ' + result.level;
   vpaEl.textContent = result.vpa;
+  verifiedBadgeEl.hidden = !result.verified;
 
   detailsEl.innerHTML = `
     Recipient: ${result.name}<br>
@@ -435,121 +437,3 @@ document.getElementById('analyze-scam-btn').addEventListener('click', () => {
   const analysis = analyzeScamText(text);
   resultEl.hidden = false;
   resultEl.innerHTML = `
-    <strong>${analysis.verdict}</strong>
-    <ul>${analysis.reasons.map(r => `<li>${r}</li>`).join('')}</ul>
-  `;
-});
-
-function analyzeScamText(text) {
-  const lower = text.toLowerCase();
-  const flags = [];
-
-  const patterns = [
-    { key: 'kyc', label: 'Mentions urgent KYC update — a very common phishing tactic.' },
-    { key: 'lottery', label: 'Mentions winning a lottery or prize — classic advance-fee scam pattern.' },
-    { key: 'otp', label: 'Asks for OTP — legitimate services never ask you to share your OTP.' },
-    { key: 'block', label: 'Threatens account block/suspension to create urgency — a common pressure tactic.' },
-    { key: 'click here', label: 'Contains a generic "click here" link — often used in phishing links.' },
-    { key: 'refund', label: 'Mentions unexpected refund — commonly used to lure victims into fake payment apps.' },
-    { key: 'job offer', label: 'Mentions a job offer requiring upfront payment — a known scam pattern.' },
-    { key: 'digital arrest', label: 'References "digital arrest" or legal action — a well-known impersonation scam tactic.' },
-    { key: 'send otp', label: 'Explicitly asks to send OTP — extremely high risk indicator.' },
-    { key: 'verify your account', label: 'Asks to "verify account" via link — common phishing language.' }
-  ];
-
-  patterns.forEach(p => {
-    if (lower.includes(p.key)) flags.push(p.label);
-  });
-
-  if (flags.length === 0) {
-    return {
-      verdict: 'No strong scam indicators found',
-      reasons: ['This message does not match common scam patterns we check for. Still, never share OTPs or personal banking details with anyone.']
-    };
-  }
-
-  return {
-    verdict: flags.length >= 2 ? 'High Likelihood of Scam' : 'Possible Scam Indicators Found',
-    reasons: flags
-  };
-}
-
-// ---------- NAVIGATION BETWEEN CORE SCREENS ----------
-document.getElementById('proceed-to-pay-btn').addEventListener('click', () => {
-  document.getElementById('payment-recipient').textContent =
-    `Paying: ${currentRecipient.name} (${currentRecipient.vpa})`;
-  document.getElementById('amount-input').value = '';
-  document.getElementById('warning-box').hidden = true;
-  showScreen('payment');
-});
-
-document.getElementById('scan-again-btn').addEventListener('click', resetToScanner);
-document.getElementById('cancel-btn').addEventListener('click', () => {
-  if (currentRecipient) {
-    currentRecipient.avoided = true;
-    if (history[0] && history[0].vpa === currentRecipient.vpa) {
-      history[0].avoided = true;
-      localStorage.setItem('qrshield_history', JSON.stringify(history));
-    }
-  }
-  resetToScanner();
-});
-
-document.getElementById('new-payment-btn').addEventListener('click', resetToScanner);
-
-function resetToScanner() {
-  currentRecipient = null;
-  setActiveNav('scan');
-  showScreen('scanner');
-  scanStatus.textContent = 'Point your camera at a QR code';
-  startCamera();
-}
-
-// ---------- PAYMENT SIMULATION ----------
-document.getElementById('pay-btn').addEventListener('click', () => {
-  const amount = document.getElementById('amount-input').value;
-  const warningBox = document.getElementById('warning-box');
-
-  if (!amount || amount <= 0) {
-    alert('Please enter a valid amount.');
-    return;
-  }
-
-  if (currentRecipient.level === 'high' || currentRecipient.level === 'medium') {
-    warningBox.hidden = false;
-    warningBox.innerHTML = `
-      <strong>Transaction Risk: ${currentRecipient.level.toUpperCase()}</strong>
-      <p>Potential consequences:</p>
-      <ul>
-        <li>Payment may be associated with a suspicious recipient.</li>
-        <li>Recipient may be under review or investigation.</li>
-        <li>Your transaction could potentially become part of a fraud trail.</li>
-      </ul>
-      <p>We cannot guarantee your account will or won't be affected. Proceed only if you trust this recipient.</p>
-    `;
-    const payBtn = document.getElementById('pay-btn');
-    payBtn.textContent = 'Proceed Anyway';
-    payBtn.onclick = () => completePayment(amount);
-  } else {
-    completePayment(amount);
-  }
-});
-
-function completePayment(amount) {
-  showScreen('confirmation');
-  const icon = document.getElementById('confirmation-icon');
-  const title = document.getElementById('confirmation-title');
-  const text = document.getElementById('confirmation-text');
-
-  icon.textContent = currentRecipient.level === 'high' ? '⚠️' : '✔️';
-  title.textContent = currentRecipient.level === 'high'
-    ? 'Payment Sent — Proceed with Caution'
-    : 'Payment Successful';
-  text.textContent = `₹${amount} sent to ${currentRecipient.vpa}. This is a simulated transaction for demo purposes.`;
-
-  const payBtn = document.getElementById('pay-btn');
-  payBtn.textContent = 'Pay';
-}
-
-// ---------- INIT ----------
-startCamera();
