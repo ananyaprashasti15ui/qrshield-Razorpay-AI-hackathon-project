@@ -199,6 +199,17 @@ h3.history-heading {
   word-break: break-all;
 }
 
+.verified-badge {
+  display: inline-block;
+  background: #1a3d1a;
+  color: #3fb950;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
 .recipient-details {
   font-size: 13px;
   color: #8b949e;
