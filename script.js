@@ -75,6 +75,10 @@ const scanStatus = document.getElementById('scan-status');
 let scanning = false;
 
 async function startCamera() {
+  if (typeof jsQR === 'undefined' || window.jsQRFailed) {
+    scanStatus.textContent = 'Scanner failed to load. Please check your internet connection and refresh, or use manual entry below.';
+    return;
+  }
   scanStatus.textContent = 'Requesting camera access...';
   try {
     stream = await navigator.mediaDevices.getUserMedia({
