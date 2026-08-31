@@ -33,6 +33,17 @@ body {
   max-width: 320px;
 }
 
+.lang-select {
+  margin-top: 12px;
+  background: #161b22;
+  color: #e6edf3;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
 /* Bottom Nav */
 .bottom-nav {
   display: flex;
