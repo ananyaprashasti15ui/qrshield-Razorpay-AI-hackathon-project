@@ -1,3 +1,221 @@
+
+Claude finished the response
+
+Thought for 27s
+Thought for 27s
+Bilkul sahi observation bhai — abhi sirf Hindi/English fallback hai. Ek proper language selector add karte hain jisse user apni pasand ki bhasha choose kar sake (Hindi, English, Tamil, Telugu, Bengali, Marathi) — voice warning usi bhasha mein bolegi.
+
+
+Edited 3 files, ran 2 commands · 3 notes
+Edited 3 files, ran 2 commands · 3 notes
+Syntax clean hai. Kya samajhna zaroori hai: Zyada tar desktop browsers mein sirf Hindi/English voice hoti hai by default — Tamil/Telugu/Bengali/Marathi voice sirf tab bolegi jab device mein wo voice actually installed ho (kai Android phones mein hoti hai, laptops mein kam). Isliye maine automatic fallback to English rakha hai — agar selected language ki voice available nahi hai, silently English mein bolega instead of crash/silent fail hone ke.
+
+Ab teeno complete files deta hu:
+
+
+Full index.html
+Full index.html
+
+Full index.html
+File 1/3 — index.html:
+
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QRShield — Pre-Payment Risk Detection</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>QRShield</h1>
+  <p class="tagline">Don't just verify where your money is going. Verify the risk before it gets there.</p>
+  <select id="lang-select" class="lang-select">
+    <option value="hi-IN">हिंदी</option>
+    <option value="en-US">English</option>
+    <option value="ta-IN">தமிழ்</option>
+    <option value="te-IN">తెలుగు</option>
+    <option value="bn-IN">বাংলা</option>
+    <option value="mr-IN">मराठी</option>
+  </select>
+</header>
+
+<nav class="bottom-nav">
+  <button id="nav-scan" class="nav-btn active">Scan</button>
+  <button id="nav-dashboard" class="nav-btn">Dashboard</button>
+  <button id="nav-guardian" class="nav-btn">Guardian</button>
+  <button id="nav-enterprise" class="nav-btn">Enterprise</button>
+</nav>
+
+<main>
+
+  <!-- SCREEN 1: SCANNER -->
+  <section id="scanner-screen" class="screen active">
+    <h2>Scan UPI QR Code</h2>
+    <div class="video-wrapper">
+    <video id="video" playsinline muted autoplay></video>
+      <canvas id="canvas" hidden></canvas>
+    </div>
+    <p id="scan-status">Point your camera at a QR code</p>
+    <button id="manual-btn" class="secondary-btn">Enter UPI ID Manually</button>
+    <button id="scam-check-btn" class="secondary-btn">Check a Suspicious Message Instead</button>
+  </section>
+
+  <!-- SCREEN 2: RISK RESULT -->
+  <section id="result-screen" class="screen">
+    <div id="risk-card" class="risk-card">
+      <div id="risk-badge" class="risk-badge">LOW RISK</div>
+
+      <svg id="gauge" viewBox="0 0 200 110" class="gauge-svg">
+        <path d="M10,100 A90,90 0 0,1 190,100" fill="none" stroke="#30363d" stroke-width="14"/>
+        <path id="gauge-fill" d="M10,100 A90,90 0 0,1 190,100" fill="none" stroke="#3fb950" stroke-width="14" stroke-dasharray="283" stroke-dashoffset="283"/>
+        <text id="gauge-number" x="100" y="90" text-anchor="middle" class="gauge-number">0</text>
+      </svg>
+
+      <p id="recipient-vpa" class="recipient-vpa"></p>
+      <span id="verified-badge" class="verified-badge" hidden>✓ Verified Merchant</span>
+      <div id="recipient-details" class="recipient-details"></div>
+
+      <canvas id="trend-chart" height="120"></canvas>
+
+      <div id="risk-reasons" class="risk-reasons"></div>
+    </div>
+    <button id="proceed-to-pay-btn" class="primary-btn">Continue to Pay</button>
+    <button id="report-btn" class="secondary-btn">🚩 Report this recipient as suspicious</button>
+    <button id="scan-again-btn" class="secondary-btn">Scan Another QR</button>
+  </section>
+
+  <!-- SCREEN 3: PAYMENT SIMULATION -->
+  <section id="payment-screen" class="screen">
+    <h2>Enter Amount</h2>
+    <p id="payment-recipient" class="recipient-vpa"></p>
+    <input type="number" id="amount-input" placeholder="₹ Enter amount" />
+    <div id="warning-box" class="warning-box" hidden></div>
+    <button id="pay-btn" class="primary-btn">Pay</button>
+    <button id="cancel-btn" class="secondary-btn">Cancel</button>
+  </section>
+
+  <!-- SCREEN 4: CONFIRMATION -->
+  <section id="confirmation-screen" class="screen">
+    <div id="confirmation-icon" class="confirmation-icon"></div>
+    <h2 id="confirmation-title">Payment Successful</h2>
+    <p id="confirmation-text"></p>
+    <button id="new-payment-btn" class="primary-btn">New Payment</button>
+  </section>
+
+  <!-- SCREEN 5: DASHBOARD -->
+  <section id="dashboard-screen" class="screen">
+    <h2>Your Safety Dashboard</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="stat-total">0</div>
+        <div class="stat-label">Total Scans</div>
+      </div>
+      <div class="stat-card safe">
+        <div class="stat-number" id="stat-safe">0</div>
+        <div class="stat-label">Safe Payments</div>
+      </div>
+      <div class="stat-card risky">
+        <div class="stat-number" id="stat-risky">0</div>
+        <div class="stat-label">Risky Flagged</div>
+      </div>
+      <div class="stat-card avoided">
+        <div class="stat-number" id="stat-avoided">0</div>
+        <div class="stat-label">Payments Avoided</div>
+      </div>
+    </div>
+    <h3 class="history-heading">Recent Activity</h3>
+    <div id="history-list" class="history-list"></div>
+  </section>
+
+  <!-- SCREEN 6: GUARDIAN MODE -->
+  <section id="guardian-screen" class="screen">
+    <h2>Guardian Mode</h2>
+    <p class="section-subtext">Add a trusted contact who gets alerted if a high-risk payment is attempted — built for protecting parents and elderly family members from digital fraud.</p>
+
+    <div id="guardian-setup" class="guardian-card">
+      <label>Trusted Contact Name</label>
+      <input type="text" id="guardian-name" placeholder="e.g. Rohan (Son)" />
+      <label>Trusted Contact Phone</label>
+      <input type="tel" id="guardian-phone" placeholder="e.g. 98765xxxxx" />
+      <button id="save-guardian-btn" class="primary-btn">Enable Guardian Mode</button>
+    </div>
+
+    <div id="guardian-active" class="guardian-card" hidden>
+      <p class="guardian-status">Guardian Mode Active</p>
+      <p id="guardian-info" class="guardian-info"></p>
+      <button id="remove-guardian-btn" class="secondary-btn">Turn Off</button>
+    </div>
+
+    <h3 class="history-heading">Guardian Alert Log</h3>
+    <div id="guardian-log" class="history-list"></div>
+  </section>
+
+  <!-- SCREEN 7: SCAM MESSAGE ANALYZER -->
+  <section id="scam-screen" class="screen">
+    <h2>Suspicious Message Check</h2>
+    <p class="section-subtext">Paste a message, SMS, or WhatsApp text you received — QRShield will analyze it for common scam patterns.</p>
+    <textarea id="scam-input" rows="6" placeholder="Paste the message here..."></textarea>
+    <button id="analyze-scam-btn" class="primary-btn">Analyze Message</button>
+    <div id="scam-result" class="risk-reasons" hidden></div>
+    <button id="scam-back-btn" class="secondary-btn">Back to Scanner</button>
+  </section>
+
+  <!-- SCREEN 8: ENTERPRISE / RAZORPAY INTEGRATION -->
+  <section id="enterprise-screen" class="screen">
+    <h2>Enterprise Integration</h2>
+    <p class="section-subtext">QRShield's risk engine is designed API-first — it can plug directly into existing payment infrastructure as a pre-transaction safety layer.</p>
+
+    <div class="mockup-card">
+      <p class="mockup-label">Concept: Razorpay Checkout Widget</p>
+      <div class="mock-checkout">
+        <div class="mock-checkout-header">Razorpay Checkout</div>
+        <div class="mock-checkout-body">
+          <div class="mock-row">
+            <span>Paying to</span>
+            <span>merchant@razorpay</span>
+          </div>
+          <div class="mock-row">
+            <span>Amount</span>
+            <span>₹2,499</span>
+          </div>
+          <div class="mock-risk-tag low">QRShield: Verified Merchant — Low Risk</div>
+          <button class="mock-pay-btn">Pay Now</button>
+        </div>
+      </div>
+      <p class="mockup-caption">A lightweight risk badge, shown automatically before checkout completes — no extra step for the user.</p>
+    </div>
+
+    <div class="mockup-card">
+      <p class="mockup-label">Concept: RazorpayX Bulk Payout Screening</p>
+      <p class="section-subtext" style="text-align:left;">
+        For businesses issuing bulk vendor/payroll payouts via RazorpayX, QRShield's engine can pre-screen beneficiary accounts at scale — flagging suspicious accounts before a batch payout is approved, reducing exposure to mule-account fraud.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" onerror="window.jsQRFailed = true;"></script>
+<script src="script.js"></script>
+</body>
+</html>
+Ise commit karke bata do, phir script.js (bada file — multilingual logic) aur style.css agle messages mein bhejta hu.
+
+abety ye bilingual wale voice ko fix krte hai pehle
+
+Theek hai, chalo yehi complete karte hain pehle. index.html toh de diya — ab bacha hua script.js (voice logic) aur style.css (dropdown styling) dete hain, phir ye feature done ho jayega.
+
+
+Ran 4 commands
+Ran 4 commands
+Poora content mil gaya. File 2/3 — script.js (multilingual voice ke saath complete):
+
+javascript
 // ---------- STATE ----------
 let currentRecipient = null;
 let simulatedData = [];
@@ -333,8 +551,43 @@ function renderTrendChart(result) {
   });
 }
 
-// ---------- VOICE ALERT ----------
+// ---------- VOICE ALERT / LANGUAGE ----------
 let cachedVoices = [];
+let selectedLang = localStorage.getItem('qrshield_lang') || 'hi-IN';
+
+const voiceMessages = {
+  'hi-IN': {
+    high: 'Sawdhan. Yeh payment high risk ho sakta hai. Kripya dhyan se aage badhein.',
+    medium: 'Dhyan dein. Yeh recipient medium risk category mein hai.'
+  },
+  'en-US': {
+    high: 'Warning. This payment may be high risk. Please proceed with caution.',
+    medium: 'Please note. This recipient falls under the medium risk category.'
+  },
+  'ta-IN': {
+    high: 'எச்சரிக்கை. இந்தப் பணம் செலுத்துதல் அதிக ஆபத்துடையதாக இருக்கலாம். தயவுசெய்து கவனமாக தொடரவும்.',
+    medium: 'கவனிக்கவும். இந்த பெறுநர் நடுத்தர ஆபத்து பிரிவில் உள்ளார்.'
+  },
+  'te-IN': {
+    high: 'హెచ్చరిక. ఈ చెల్లింపు అధిక ప్రమాదకరంగా ఉండవచ్చు. దయచేసి జాగ్రత్తగా కొనసాగండి.',
+    medium: 'దయచేసి గమనించండి. ఈ గ్రహీత మధ్యస్థ ప్రమాద వర్గంలో ఉన్నారు.'
+  },
+  'bn-IN': {
+    high: 'সতর্কতা। এই পেমেন্টটি উচ্চ ঝুঁকিপূর্ণ হতে পারে। অনুগ্রহ করে সতর্কতার সাথে এগিয়ে যান।',
+    medium: 'অনুগ্রহ করে লক্ষ্য করুন। এই প্রাপক মাঝারি ঝুঁকির বিভাগে রয়েছেন।'
+  },
+  'mr-IN': {
+    high: 'सावधान. हे पेमेंट उच्च जोखमीचे असू शकते. कृपया काळजीपूर्वक पुढे जा.',
+    medium: 'कृपया लक्षात घ्या. हा प्राप्तकर्ता मध्यम जोखीम श्रेणीत आहे.'
+  }
+};
+
+const langSelect = document.getElementById('lang-select');
+langSelect.value = selectedLang;
+langSelect.addEventListener('change', () => {
+  selectedLang = langSelect.value;
+  localStorage.setItem('qrshield_lang', selectedLang);
+});
 
 function loadVoices() {
   if ('speechSynthesis' in window) {
@@ -350,18 +603,15 @@ if ('speechSynthesis' in window) {
 function speakWarning(result) {
   if (!('speechSynthesis' in window)) return;
 
-  const hasHindiVoice = cachedVoices.some(v => v.lang && v.lang.toLowerCase().startsWith('hi'));
+  const langPrefix = selectedLang.split('-')[0];
+  const hasSelectedVoice = cachedVoices.some(v => v.lang && v.lang.toLowerCase().startsWith(langPrefix));
 
-  const message = result.level === 'high'
-    ? (hasHindiVoice
-        ? 'Sawdhan. Yeh payment high risk ho sakta hai. Kripya dhyan se aage badhein.'
-        : 'Warning. This payment may be high risk. Please proceed with caution.')
-    : (hasHindiVoice
-        ? 'Dhyan dein. Yeh recipient medium risk category mein hai.'
-        : 'Please note. This recipient falls under the medium risk category.');
+  const finalLang = hasSelectedVoice ? selectedLang : 'en-US';
+  const messages = voiceMessages[finalLang] || voiceMessages['en-US'];
+  const message = result.level === 'high' ? messages.high : messages.medium;
 
   const utterance = new SpeechSynthesisUtterance(message);
-  utterance.lang = hasHindiVoice ? 'hi-IN' : 'en-US';
+  utterance.lang = finalLang;
   utterance.rate = 0.95;
   utterance.onerror = (e) => console.error('Speech synthesis error:', e);
 
