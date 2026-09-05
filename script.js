@@ -159,6 +159,54 @@ document.getElementById('manual-btn').addEventListener('click', () => {
   }
 });
 
+// ---------- UPLOAD QR FROM GALLERY ----------
+document.getElementById('upload-qr-btn').addEventListener('click', () => {
+  if (typeof jsQR === 'undefined' || window.jsQRFailed) {
+    alert('QR scanner library failed to load. Please check your internet connection and refresh the page.');
+    return;
+  }
+  document.getElementById('qr-image-input').click();
+});
+
+document.getElementById('qr-image-input').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+
+  scanStatus.textContent = 'Reading image...';
+
+  const img = new Image();
+  img.onload = () => {
+    const uploadCanvas = document.createElement('canvas');
+    uploadCanvas.width = img.width;
+    uploadCanvas.height = img.height;
+    const uploadCtx = uploadCanvas.getContext('2d');
+    uploadCtx.drawImage(img, 0, 0);
+
+    const imageData = uploadCtx.getImageData(0, 0, uploadCanvas.width, uploadCanvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+      inversionAttempts: 'attemptBoth'
+    });
+
+    URL.revokeObjectURL(img.src);
+
+    if (code && code.data) {
+      stopCamera();
+      scanStatus.textContent = 'QR detected in image — analyzing...';
+      const vpa = extractVPA(code.data);
+      setTimeout(() => runRiskCheck(vpa), 500);
+    } else {
+      scanStatus.textContent = 'Point your camera at a QR code';
+      alert('No QR code found in this image. Try a clearer screenshot or photo.');
+    }
+  };
+  img.onerror = () => {
+    scanStatus.textContent = 'Point your camera at a QR code';
+    alert('Could not load this image. Please try a different file.');
+  };
+  img.src = URL.createObjectURL(file);
+});
+
 // ---------- RISK ENGINE ----------
 function runRiskCheck(vpa) {
   const known = simulatedData.find(r => r.vpa.toLowerCase() === vpa.toLowerCase());
